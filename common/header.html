@@ -1,0 +1,34 @@
+<script type="text/discourse-plugin" version="0.8">
+// options
+const TABBIS_SCRIPT_SRC = "https://cdn.jsdelivr.net/gh/jenstornell/tabbis.js/assets/js/src/tabbis.es6.js";
+
+// we use the Discourse Load script lib to ensure scripts are loaded
+// properly. Don't worry, this is smart enough to not duplicate the script
+// if it's already loaded
+const loadScript = require("discourse/lib/load-script").default;
+
+// create a post decorator
+api.decorateCookedElement(
+  post => {
+    // does this post have tabbis tabs?
+    const tabbisTabs = post.querySelectorAll('[data-wrap="tabbis"]');
+
+    // Yes, so let's do some work.
+    if (tabbisTabs.length) {
+      // for each tabbis widget
+      tabbisTabs.forEach(tabbisTab => {
+
+        // load the tabbis script.
+        loadScript(TABBIS_SCRIPT_SRC).then(() => {
+
+          // everything is ready, let's call the tabbis script
+          tabbis();
+        });
+      });
+    }
+  },
+  // add an id to the decorator to avoid memory leaks
+  { id: "render-tabbis-tabs" }
+);
+
+</script>
